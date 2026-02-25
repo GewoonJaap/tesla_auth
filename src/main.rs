@@ -138,7 +138,6 @@ fn main() -> anyhow::Result<()> {
 
     #[cfg(not(any(target_os = "windows", target_os = "macos",)))]
     let webview = {
-        use tao::platform::unix::WindowExtUnix;
         use wry::WebViewBuilderExtUnix;
         let vbox = window.default_vbox().unwrap();
         builder.build_gtk(vbox)?
