@@ -126,8 +126,7 @@ impl Client {
 
         let http_client = reqwest::blocking::ClientBuilder::new()
             .redirect(reqwest::redirect::Policy::none())
-            .build()
-            .expect("Client should build");
+            .build()?;
 
         let sso_token: SsoToken = client
             .exchange_code(AuthorizationCode::new(code.to_string()))
