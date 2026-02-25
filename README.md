@@ -5,19 +5,19 @@
 
 Securely generate API tokens for third-party access to your Tesla.
 
-Multi-factor authentication (MFA) and Captcha are supported.
+Supports MFA and Captcha through Tesla's native login flow.
 
 ## Download
 
 - macOS [Apple Silicon](https://github.com/adriankumpf/tesla_auth/releases/latest/download/tesla_auth-aarch64-apple-darwin.tar.xz) / [Intel](https://github.com/adriankumpf/tesla_auth/releases/latest/download/tesla_auth-x86_64-apple-darwin.tar.xz)
-- [Linux](https://github.com/adriankumpf/tesla_auth/releases/latest/download/tesla_auth-x86_64-unknown-linux-gnu.tar.xz)
+- Linux [x86_64](https://github.com/adriankumpf/tesla_auth/releases/latest/download/tesla_auth-x86_64-unknown-linux-gnu.tar.xz) / [ARM](https://github.com/adriankumpf/tesla_auth/releases/latest/download/tesla_auth-aarch64-unknown-linux-gnu.tar.xz)
 - [Windows](https://github.com/adriankumpf/tesla_auth/releases/latest/download/tesla_auth-x86_64-pc-windows-msvc.zip)
 
 ## Usage
 
 ```plain
 ❯ tesla_auth --help
-Usage: tesla_auth [-d] [-k]
+Usage: tesla_auth [-d] [-c]
 
 Tesla API tokens generator
 
@@ -25,7 +25,7 @@ Options:
   -d, --debug       print debug output
   -c, --clear-browsing-data
                     clear browsing data at startup
-  --help            display usage information
+  --help, help      display usage information
 ```
 
 ### Steps
@@ -82,4 +82,4 @@ cargo install --path . --locked
 
 ## License
 
-Apache-2.0/MIT
+MIT
