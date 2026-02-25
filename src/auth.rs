@@ -51,7 +51,7 @@ impl fmt::Display for Tokens {
 ----------------------------------- VALID FOR ----------------------------------
 
 {}
-                "#,
+"#,
             self.access.secret(),
             self.refresh.secret(),
             self.expires_in
