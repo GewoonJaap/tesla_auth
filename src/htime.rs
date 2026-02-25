@@ -43,15 +43,20 @@ fn pretty_print(d: &time::Duration) -> String {
             .expect("overflow");
     }
 
-    out.join(" ")
+    if out.is_empty() {
+        "less than a minute".to_string()
+    } else {
+        out.join(" ")
+    }
 }
 
 #[test]
 fn test_pretty_print() {
     let pp = |secs| pretty_print(&time::Duration::from_secs(secs));
 
-    assert_eq!(pp(0), "");
-    assert_eq!(pp(MINUTE - 1), "");
+    assert_eq!(pp(0), "less than a minute");
+    assert_eq!(pp(MINUTE - 1), "less than a minute");
+    assert_eq!(pp(30), "less than a minute");
     assert_eq!(pp(MINUTE), "1 minute");
 
     assert_eq!(pp(DAY / 2), "12 hours");
