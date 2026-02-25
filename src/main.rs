@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use std::collections::HashMap;
 use std::sync::mpsc::{Sender, channel};
 use std::thread;
@@ -210,7 +209,8 @@ fn url_handler(client: auth::Client, event_proxy: EventLoopProxy<UserEvent>) -> 
         while let Ok(url) = rx.recv() {
             if auth::is_redirect_url(&url) {
                 let event = handle_redirect(&url, client);
-                return event_proxy.send_event(event).unwrap();
+                let _ = event_proxy.send_event(event);
+                return;
             }
         }
     });
@@ -221,14 +221,22 @@ fn url_handler(client: auth::Client, event_proxy: EventLoopProxy<UserEvent>) -> 
 fn handle_redirect(url: &Url, client: auth::Client) -> UserEvent {
     let query: HashMap<_, _> = url.query_pairs().collect();
 
-    if let Some(Cow::Borrowed("login_cancelled")) = query.get("error") {
+    if query.get("error").is_some_and(|v| v == "login_cancelled") {
         return UserEvent::LoginCanceled;
     }
 
-    let state = query.get("state").expect("No state parameter found");
-    let code = query.get("code").expect("No code parameter found");
-    let issuer = query.get("issuer").expect("No issuer parameter found");
-    let issuer_url = Url::parse(issuer).expect("Issuer URL is not valid");
+    let (Some(state), Some(code), Some(issuer)) =
+        (query.get("state"), query.get("code"), query.get("issuer"))
+    else {
+        return UserEvent::Failure(anyhow::anyhow!(
+            "Redirect URL missing required query parameters (state, code, or issuer)"
+        ));
+    };
+
+    let issuer_url = match Url::parse(issuer) {
+        Ok(url) => url,
+        Err(e) => return UserEvent::Failure(anyhow::anyhow!("Invalid issuer URL: {e}")),
+    };
 
     match client.retrieve_tokens(code, state, &issuer_url) {
         Ok(tokens) => UserEvent::Tokens(tokens),
