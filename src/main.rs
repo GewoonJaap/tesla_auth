@@ -209,28 +209,31 @@ fn url_handler(client: auth::Client, event_proxy: EventLoopProxy<UserEvent>) -> 
     thread::spawn(move || {
         while let Ok(url) = rx.recv() {
             if auth::is_redirect_url(&url) {
-                let query: HashMap<_, _> = url.query_pairs().collect();
-
-                if let Some(Cow::Borrowed("login_cancelled")) = query.get("error") {
-                    return event_proxy.send_event(UserEvent::LoginCanceled).unwrap();
-                }
-
-                let state = query.get("state").expect("No state parameter found");
-                let code = query.get("code").expect("No code parameter found");
-                let issuer = query.get("issuer").expect("No issuer parameter found");
-                let issuer_url = Url::parse(issuer).expect("Issuer URL is not valid");
-
-                let event = match client.retrieve_tokens(code, state, &issuer_url) {
-                    Ok(tokens) => UserEvent::Tokens(tokens),
-                    Err(error) => UserEvent::Failure(error),
-                };
-
+                let event = handle_redirect(&url, client);
                 return event_proxy.send_event(event).unwrap();
             }
         }
     });
 
     tx
+}
+
+fn handle_redirect(url: &Url, client: auth::Client) -> UserEvent {
+    let query: HashMap<_, _> = url.query_pairs().collect();
+
+    if let Some(Cow::Borrowed("login_cancelled")) = query.get("error") {
+        return UserEvent::LoginCanceled;
+    }
+
+    let state = query.get("state").expect("No state parameter found");
+    let code = query.get("code").expect("No code parameter found");
+    let issuer = query.get("issuer").expect("No issuer parameter found");
+    let issuer_url = Url::parse(issuer).expect("Issuer URL is not valid");
+
+    match client.retrieve_tokens(code, state, &issuer_url) {
+        Ok(tokens) => UserEvent::Tokens(tokens),
+        Err(error) => UserEvent::Failure(error),
+    }
 }
 
 fn render_error_view(error: anyhow::Error) -> String {
