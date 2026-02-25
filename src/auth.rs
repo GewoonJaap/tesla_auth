@@ -15,6 +15,9 @@ use oauth2::{EndpointNotSet, EndpointSet};
 
 use crate::htime;
 
+type ConfiguredClient =
+    BasicClient<EndpointSet, EndpointNotSet, EndpointNotSet, EndpointNotSet, EndpointSet>;
+
 const CLIENT_ID: &str = "ownerapi";
 const AUTH_URL: &str = "https://auth.tesla.com/oauth2/v3/authorize";
 const TOKEN_URL: &str = "https://auth.tesla.com/oauth2/v3/token";
@@ -58,10 +61,8 @@ impl fmt::Display for Tokens {
 
 pub struct Client {
     auth_url: Url,
-    oauth_client:
-        BasicClient<EndpointSet, EndpointNotSet, EndpointNotSet, EndpointNotSet, EndpointSet>,
-    oauth_client_cn:
-        BasicClient<EndpointSet, EndpointNotSet, EndpointNotSet, EndpointNotSet, EndpointSet>,
+    oauth_client: ConfiguredClient,
+    oauth_client_cn: ConfiguredClient,
     pkce_verifier: PkceCodeVerifier,
     csrf_token: CsrfToken,
 }
