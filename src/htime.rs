@@ -50,22 +50,27 @@ fn pretty_print(d: &time::Duration) -> String {
     }
 }
 
-#[test]
-fn test_pretty_print() {
-    let pp = |secs| pretty_print(&time::Duration::from_secs(secs));
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    assert_eq!(pp(0), "less than a minute");
-    assert_eq!(pp(MINUTE - 1), "less than a minute");
-    assert_eq!(pp(30), "less than a minute");
-    assert_eq!(pp(MINUTE), "1 minute");
+    #[test]
+    fn test_pretty_print() {
+        let pp = |secs| pretty_print(&time::Duration::from_secs(secs));
 
-    assert_eq!(pp(DAY / 2), "12 hours");
-    assert_eq!(pp(DAY), "1 day");
-    assert_eq!(pp(10 * DAY), "10 days");
+        assert_eq!(pp(0), "less than a minute");
+        assert_eq!(pp(MINUTE - 1), "less than a minute");
+        assert_eq!(pp(30), "less than a minute");
+        assert_eq!(pp(MINUTE), "1 minute");
 
-    assert_eq!(pp(DAY + MINUTE - 1), "1 day");
-    assert_eq!(pp(DAY + MINUTE), "1 day 1 minute");
-    assert_eq!(pp(DAY - 1), "23 hours 59 minutes");
+        assert_eq!(pp(DAY / 2), "12 hours");
+        assert_eq!(pp(DAY), "1 day");
+        assert_eq!(pp(10 * DAY), "10 days");
 
-    assert_eq!(pp(2 * DAY - 1), "1 day 23 hours 59 minutes");
+        assert_eq!(pp(DAY + MINUTE - 1), "1 day");
+        assert_eq!(pp(DAY + MINUTE), "1 day 1 minute");
+        assert_eq!(pp(DAY - 1), "23 hours 59 minutes");
+
+        assert_eq!(pp(2 * DAY - 1), "1 day 23 hours 59 minutes");
+    }
 }
