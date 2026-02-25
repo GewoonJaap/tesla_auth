@@ -2852,7 +2852,6 @@ dependencies = [
  "muda",
  "oauth2",
  "reqwest 0.13.2",
- "serde",
  "serde_json",
  "simple_logger",
  "static_vcruntime",

@@ -168,12 +168,16 @@ fn main() -> anyhow::Result<()> {
 
             Event::UserEvent(UserEvent::Failure(error)) => {
                 log::error!("{error}");
-                webview.evaluate_script(&render_error_view(error)).unwrap();
+                if let Err(e) = webview.evaluate_script(&render_error_view(error)) {
+                    log::error!("Failed to render error view: {e}");
+                }
             }
 
             Event::UserEvent(UserEvent::Tokens(token)) => {
                 println!("{token}");
-                webview.evaluate_script(&render_tokens_view(token)).unwrap();
+                if let Err(e) = webview.evaluate_script(&render_tokens_view(token)) {
+                    log::error!("Failed to render tokens view: {e}");
+                }
             }
 
             Event::UserEvent(UserEvent::LoginCanceled) => {
@@ -244,36 +248,61 @@ fn handle_redirect(url: &Url, client: auth::Client) -> UserEvent {
     }
 }
 
+// Encode a string as a JSON string literal for safe JS interpolation.
+#[expect(clippy::unwrap_used)] // serde_json string serialization is infallible
+fn js_string(s: &str) -> String {
+    serde_json::to_string(s).unwrap()
+}
+
 fn render_error_view(error: anyhow::Error) -> String {
-    r#"
-        const html = `
-            <h4 style="text-align: center;">An error occurred. Please try again ...</h4>
-            <p style="text-align: center;color:red;margin-bottom:20px;">{msg}</p>
-        `;
-        document.querySelector("h1.h1").outerHTML = html;
-    "#
-    .replace("{msg}", &error.to_string())
+    let msg = js_string(&error.to_string());
+    format!(
+        r#"(function() {{
+            var target = document.querySelector("h1.h1");
+            var h4 = document.createElement("h4");
+            h4.style.textAlign = "center";
+            h4.textContent = "An error occurred. Please try again ...";
+            var p = document.createElement("p");
+            p.style.cssText = "text-align:center;color:red;margin-bottom:20px";
+            p.textContent = {msg};
+            target.replaceWith(h4, p);
+        }})()"#
+    )
 }
 
 fn render_tokens_view(tokens: auth::Tokens) -> String {
-    r#"
-        const html = `
-            <h4 style="text-align: center;">Access Token</h4>
-            <textarea readonly onclick="this.setSelectionRange(0, this.value.length)"
-                      cols="100" rows="12" style="resize:none;padding:4px;font-size:0.9em;"
-            >{access_token}</textarea>
-            <h4 style="text-align: center;">Refresh Token</h4>
-            <textarea readonly onclick="this.setSelectionRange(0, this.value.length)"
-                      cols="100" rows="12" style="resize:none;padding:4px;font-size:0.9em;"
-            >{refresh_token}</textarea>
-            <small style="margin-top:12px;margin-bottom:20px;text-align:center;color:seagreen;">
-            Valid for {expires_in}
-            </small>
-        `;
+    let access = js_string(tokens.access.secret());
+    let refresh = js_string(tokens.refresh.secret());
+    let expires = js_string(&tokens.expires_in.to_string());
+    format!(
+        r#"(function() {{
+            var target = document.querySelector("h1.h1");
+            var frag = document.createDocumentFragment();
 
-        document.querySelector("h1.h1").outerHTML = html;
-    "#
-    .replace("{access_token}", tokens.access.secret())
-    .replace("{refresh_token}", tokens.refresh.secret())
-    .replace("{expires_in}", &format!("{}", tokens.expires_in))
+            function addToken(label, value) {{
+                var h4 = document.createElement("h4");
+                h4.style.textAlign = "center";
+                h4.textContent = label;
+                frag.appendChild(h4);
+                var ta = document.createElement("textarea");
+                ta.readOnly = true;
+                ta.cols = 100;
+                ta.rows = 12;
+                ta.style.cssText = "resize:none;padding:4px;font-size:0.9em";
+                ta.value = value;
+                ta.addEventListener("click", function() {{ this.setSelectionRange(0, this.value.length); }});
+                frag.appendChild(ta);
+            }}
+
+            addToken("Access Token", {access});
+            addToken("Refresh Token", {refresh});
+
+            var small = document.createElement("small");
+            small.style.cssText = "margin-top:12px;margin-bottom:20px;text-align:center;color:seagreen";
+            small.textContent = "Valid for " + {expires};
+            frag.appendChild(small);
+
+            target.replaceWith(frag);
+        }})()"#
+    )
 }
