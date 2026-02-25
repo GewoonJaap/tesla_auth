@@ -13,7 +13,7 @@ impl From<time::Duration> for Duration {
 
 impl fmt::Display for Duration {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", pretty_print(&self.0))
+        pretty_print(f, &self.0)
     }
 }
 
@@ -21,9 +21,9 @@ const MINUTE: u64 = 60;
 const HOUR: u64 = 60 * MINUTE;
 const DAY: u64 = 24 * HOUR;
 
-fn pretty_print(d: &time::Duration) -> String {
+fn pretty_print(f: &mut fmt::Formatter<'_>, d: &time::Duration) -> fmt::Result {
     let mut d = d.as_secs();
-    let mut out = vec![];
+    let mut first = true;
 
     for (secs, suffix) in [(DAY, "day"), (HOUR, "hour"), (MINUTE, "minute")] {
         if d < secs {
@@ -32,22 +32,24 @@ fn pretty_print(d: &time::Duration) -> String {
 
         let units = d / secs;
 
-        out.push(if units == 1 {
-            format!("{units} {suffix}")
-        } else {
-            format!("{units} {suffix}s")
-        });
+        if !first {
+            f.write_str(" ")?;
+        }
+        first = false;
 
-        d = d
-            .checked_sub(units.checked_mul(secs).expect("overflow"))
-            .expect("overflow");
+        write!(f, "{units} {suffix}")?;
+        if units != 1 {
+            f.write_str("s")?;
+        }
+
+        d %= secs;
     }
 
-    if out.is_empty() {
-        "less than a minute".to_string()
-    } else {
-        out.join(" ")
+    if first {
+        f.write_str("less than a minute")?;
     }
+
+    Ok(())
 }
 
 #[cfg(test)]
@@ -56,7 +58,7 @@ mod tests {
 
     #[test]
     fn test_pretty_print() {
-        let pp = |secs| pretty_print(&time::Duration::from_secs(secs));
+        let pp = |secs| Duration::from(time::Duration::from_secs(secs)).to_string();
 
         assert_eq!(pp(0), "less than a minute");
         assert_eq!(pp(MINUTE - 1), "less than a minute");
