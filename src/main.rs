@@ -164,7 +164,7 @@ fn main() -> anyhow::Result<()> {
             Event::UserEvent(UserEvent::Navigation(url)) => {
                 if url.to_string() != "about:blank" {
                     log::debug!("URL changed: {url}");
-                    tx.send(url).unwrap();
+                    let _ = tx.send(url);
                 }
             }
 
