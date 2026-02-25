@@ -163,7 +163,7 @@ fn main() -> anyhow::Result<()> {
             } => *control_flow = ControlFlow::Exit,
 
             Event::UserEvent(UserEvent::Navigation(url)) => {
-                if url.to_string() != "about:blank" {
+                if url.as_str() != "about:blank" {
                     log::debug!("URL changed: {url}");
                     let _ = tx.send(url);
                 }

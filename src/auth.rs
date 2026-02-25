@@ -22,7 +22,7 @@ const TOKEN_URL_CN: &str = "https://auth.tesla.cn/oauth2/v3/token";
 const REDIRECT_URL: &str = "https://auth.tesla.com/void/callback";
 
 pub fn is_redirect_url(url: &Url) -> bool {
-    url.to_string().starts_with(REDIRECT_URL)
+    url.as_str().starts_with(REDIRECT_URL)
 }
 
 #[derive(Debug, Clone)]
