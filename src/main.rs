@@ -125,7 +125,10 @@ fn main() -> anyhow::Result<()> {
     let builder = WebViewBuilder::new()
         .with_initialization_script(INITIALIZATION_SCRIPT)
         .with_navigation_handler(move |uri: String| {
-            let uri = Url::parse(&uri).expect("not a valid URL");
+            let Ok(uri) = Url::parse(&uri) else {
+                log::warn!("Ignoring malformed navigation URL: {uri}");
+                return false;
+            };
             proxy.send_event(UserEvent::Navigation(uri)).is_ok()
         })
         .with_clipboard(true)
