@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0] - 2026-02-25
+
+- Build binary for `aarch64-unknown-linux-gnu`
+- Replace JS template interpolation with DOM APIs
+- Prevent panics in various error scenarios
+- Update dependencies
+
 ## [0.11.0] - 2025-11-09
 
 - Fixed crash after generating tokens
@@ -97,7 +104,8 @@
 
 ## [0.1.0] - 2021-09-17
 
-[0.10.0]: https://github.com/adriankumpf/tesla_auth/compare/v0.10.0...v0.11.0
+[0.12.0]: https://github.com/adriankumpf/tesla_auth/compare/v0.11.0...v0.12.0
+[0.11.0]: https://github.com/adriankumpf/tesla_auth/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/adriankumpf/tesla_auth/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/adriankumpf/tesla_auth/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/adriankumpf/tesla_auth/compare/v0.7.0...v0.8.0
