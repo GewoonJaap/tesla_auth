@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.13.0] - 2026-04-22
+- Fix Tesla login url
+
 ## [0.12.0] - 2026-02-25
 
 - Build binary for `aarch64-unknown-linux-gnu`
