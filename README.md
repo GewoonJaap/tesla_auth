@@ -1,7 +1,7 @@
 # Tesla Auth
 
-[![CI](https://github.com/adriankumpf/tesla_auth/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/adriankumpf/tesla_auth/actions/workflows/ci.yml)
-[![CD](https://github.com/adriankumpf/tesla_auth/actions/workflows/release.yml/badge.svg)](https://github.com/adriankumpf/tesla_auth/actions/workflows/release.yml)
+[![CI](https://github.com/GewoonJaap/tesla_auth/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/GewoonJaap/tesla_auth/actions/workflows/ci.yml)
+[![CD](https://github.com/GewoonJaap/tesla_auth/actions/workflows/release.yml/badge.svg)](https://github.com/GewoonJaap/tesla_auth/actions/workflows/release.yml)
 
 Securely generate API tokens for third-party access to your Tesla.
 
@@ -9,9 +9,9 @@ Supports MFA and Captcha through Tesla's native login flow.
 
 ## Download
 
-- macOS [Apple Silicon](https://github.com/adriankumpf/tesla_auth/releases/latest/download/tesla_auth-aarch64-apple-darwin.tar.xz) / [Intel](https://github.com/adriankumpf/tesla_auth/releases/latest/download/tesla_auth-x86_64-apple-darwin.tar.xz)
-- Linux [x86_64](https://github.com/adriankumpf/tesla_auth/releases/latest/download/tesla_auth-x86_64-unknown-linux-gnu.tar.xz) / [ARM](https://github.com/adriankumpf/tesla_auth/releases/latest/download/tesla_auth-aarch64-unknown-linux-gnu.tar.xz)
-- [Windows](https://github.com/adriankumpf/tesla_auth/releases/latest/download/tesla_auth-x86_64-pc-windows-msvc.zip)
+- macOS [Apple Silicon](https://github.com/GewoonJaap/tesla_auth/releases/latest/download/tesla_auth-aarch64-apple-darwin.tar.xz) / [Intel](https://github.com/GewoonJaap/tesla_auth/releases/latest/download/tesla_auth-x86_64-apple-darwin.tar.xz)
+- Linux [x86_64](https://github.com/GewoonJaap/tesla_auth/releases/latest/download/tesla_auth-x86_64-unknown-linux-gnu.tar.xz) / [ARM](https://github.com/GewoonJaap/tesla_auth/releases/latest/download/tesla_auth-aarch64-unknown-linux-gnu.tar.xz)
+- [Windows](https://github.com/GewoonJaap/tesla_auth/releases/latest/download/tesla_auth-x86_64-pc-windows-msvc.zip)
 
 ## Usage
 
@@ -70,7 +70,7 @@ sudo dnf install gtk3-devel webkit2gtk4.1-devel xdotool
 
 ```bash
 # Clone repository
-git clone https://github.com/adriankumpf/tesla_auth
+git clone https://github.com/GewoonJaap/tesla_auth
 cd tesla_auth
 
 # Build (debug version)
