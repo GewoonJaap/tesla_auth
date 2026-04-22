@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.14.0] - 2026-04-22
+
+- Print a login link in the console output for easy access on mobile devices ([https://tesla-status.mrproper.dev/](https://tesla-status.mrproper.dev/))
+
 ## [0.13.0] - 2026-04-22
 - Fix Tesla login url
 

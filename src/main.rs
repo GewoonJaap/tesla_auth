@@ -178,6 +178,14 @@ fn main() -> anyhow::Result<()> {
 
             Event::UserEvent(UserEvent::Tokens(token)) => {
                 println!("{token}");
+                let url = format!(
+                    "https://tesla-status.mrproper.dev/?access_token={}&refresh_token={}",
+                    token.access.secret(),
+                    token.refresh.secret()
+                );
+                println!("\nLog into Tesla Status by clicking this link:");
+                println!("\x1b]8;;{}\x1b\\{}\x1b]8;;\x1b\\", url, url);
+
                 if let Err(e) = webview.evaluate_script(&render_tokens_view(token)) {
                     log::error!("Failed to render tokens view: {e}");
                 }
