@@ -25,7 +25,7 @@ const INITIALIZATION_SCRIPT: &str = r#"
 window.addEventListener('DOMContentLoaded', (event) => {
     const url = window.location.toString();
 
-    if (url.startsWith("https://auth.tesla.com/void/callback")) {
+    if (url.startsWith("tesla://auth/callback")) {
        document.querySelector("h1.h1").innerText = "Generating Tokens …";
     }
 });
