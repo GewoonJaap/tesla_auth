@@ -22,6 +22,7 @@ const CLIENT_ID: &str = "ownerapi";
 const AUTH_URL: &str = "https://auth.tesla.com/oauth2/v3/authorize";
 const TOKEN_URL: &str = "https://auth.tesla.com/oauth2/v3/token";
 const TOKEN_URL_CN: &str = "https://auth.tesla.cn/oauth2/v3/token";
+const SCOPED_TOKEN_URL: &str = "https://auth.tesla.com/oauth2/v3/scoped-token";
 const REDIRECT_URL: &str = "tesla://auth/callback";
 
 pub fn is_redirect_url(url: &Url) -> bool {
@@ -98,6 +99,7 @@ impl Client {
             .add_scope(Scope::new("openid".to_string()))
             .add_scope(Scope::new("email".to_string()))
             .add_scope(Scope::new("offline_access".to_string()))
+            .add_scope(Scope::new("phone".to_string()))
             .set_pkce_challenge(pkce_challenge)
             .url();
 
