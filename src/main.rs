@@ -56,6 +56,8 @@ fn main() -> anyhow::Result<()> {
 
     init_logger(args.debug)?;
 
+    check_for_updates();
+
     let event_loop = EventLoopBuilder::<UserEvent>::with_user_event().build();
     let event_proxy = event_loop.create_proxy();
 
@@ -215,6 +217,35 @@ fn init_logger(debug: bool) -> anyhow::Result<()> {
         .init()?;
 
     Ok(())
+}
+
+fn check_for_updates() {
+    thread::spawn(|| {
+        let current_version = env!("CARGO_PKG_VERSION");
+        let client = match reqwest::blocking::Client::builder()
+            .user_agent(format!("tesla_auth/{}", current_version))
+            .build()
+        {
+            Ok(c) => c,
+            Err(_) => return,
+        };
+
+        if let Ok(resp) = client.get("https://api.github.com/repos/GewoonJaap/tesla_auth/releases/latest").send() {
+            if let Ok(json) = resp.json::<serde_json::Value>() {
+                if let Some(tag_name) = json.get("tag_name").and_then(|v| v.as_str()) {
+                    let latest_version = tag_name.trim_start_matches('v');
+                    if latest_version != current_version {
+                        println!("===============================================================");
+                        println!("A new version of tesla_auth is available: {} (current: {})", latest_version, current_version);
+                        println!("Download it here: https://github.com/GewoonJaap/tesla_auth/releases/latest");
+                        println!("===============================================================\n");
+                    } else {
+                        println!("You are using the latest version, {}", current_version);
+                    }
+                }
+            }
+        }
+    });
 }
 
 fn url_handler(client: auth::Client, event_proxy: EventLoopProxy<UserEvent>) -> Sender<Url> {
